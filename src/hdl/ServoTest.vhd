@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -49,8 +50,8 @@ architecture Behavioral of ServoTest is
 --constant DIV:           integer := 5;
 constant NP:            integer := 12;
 constant NC:            integer := 2;
-constant DIV:           integer := 375;
-constant NMin:          integer := 144;         -- minimum value to be set for minimum pulse length of ca. 0.5ms
+constant DIV:           integer := 250;
+constant NMin:          integer := 112;         -- minimum value to be set for minimum pulse length of ca. 0.5ms
 constant NBtn:          integer := 4;
 
 signal outVal:          std_logic_vector(NP-1 downto 0);
@@ -63,6 +64,7 @@ signal rdy:             std_logic;
 signal pwmi:            std_logic_vector(NC-1 downto 0);
   
 signal btn_edge:        std_logic_vector(NBtn-1 downto 0);
+signal btn_dbc:         std_logic_vector(NBtn-1 downto 0);
 signal swTick:          std_logic_vector(1 downto 0);
 signal lunused:         std_logic_vector(NBtn-1 downto 0);
 signal btnSet:          std_logic_vector(NBtn-1 downto 0);
@@ -110,6 +112,18 @@ component ServoCtrl is
         );
 end component;
 
+component Debounce is
+   generic (
+		N			: integer := 19		--counting size: 2^N * 20ns = 10ms tick
+   );
+   port(
+		clk			: in std_logic;
+		reset		: in std_logic;
+		sw			: in std_logic;			--bouncing input
+		db			: out std_logic			--debounced output
+   );
+end component;
+
 component EdgeDetect is
 	port(
 		clk			: in std_logic;
@@ -153,13 +167,27 @@ begin
 pwm(NC-1 downto 0) <= pwmi;
 pwm(3 downto NC) <= (others => '0');
 
+-- generate debounced button signals
+dbce_gen_btn: for k in 0 to NBtn-1 generate
+    dbnc_btn_k: Debounce
+        generic map (
+            N       => 20
+        )
+        port map(
+            clk			=> clk,
+            reset		=> '0',
+            sw			=> btn(k),
+            db			=> btn_dbc(k)
+        );
+end generate dbce_gen_btn;
+   
 -- generate edge detectors
 edge_gen_btn: for k in 0 to NBtn-1 generate
     edge_btn_k: EdgeDetect
     port map (
         clk         => clk,
         reset       => '0',
-        level       => btn(k),
+        level       => btn_dbc(k),
         tick_rise   => btn_edge(k),
         tick_fall   => open
     );
@@ -181,7 +209,7 @@ end generate edge_gen_sw;
 -- SW(1) toggle: transfer
 -- each button will set/reset the corresponding bit and show it on led
 lunused <= (others => '0');
-outValBase <= x"030";
+outValBase <= std_logic_vector(to_unsigned(NMin, NP));
 outVal <= "00"&btnSet&outValBase(NP-NBtn-3 downto 0);
 led <= chan when sw(0) = '0' else btnSet;
 btnTick <= sumTick(btn_edge);
