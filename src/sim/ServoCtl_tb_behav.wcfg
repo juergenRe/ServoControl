@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="ServoCtl_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="ServoCtl_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="1304800000fs"></ZoomStartTime>
+      <ZoomEndTime time="2968800001fs"></ZoomEndTime>
+      <Cursor1Time time="1405000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="154"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="20" />
+   <wave_markers>
+      <marker time="139000000" label="" />
+      <marker time="2055000000" label="" />
+   </wave_markers>
+   <wvobject fp_name="/ServoCtl_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/outVal" type="array">
+      <obj_property name="ElementShortName">outVal[2:0]</obj_property>
+      <obj_property name="ObjectShortName">outVal[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/chan" type="array">
+      <obj_property name="ElementShortName">chan[3:0]</obj_property>
+      <obj_property name="ObjectShortName">chan[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/trg" type="logic">
+      <obj_property name="ElementShortName">trg</obj_property>
+      <obj_property name="ObjectShortName">trg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/rdy" type="logic">
+      <obj_property name="ElementShortName">rdy</obj_property>
+      <obj_property name="ObjectShortName">rdy</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider11">
+      <obj_property name="label">Prescaler</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/preCnt" type="other">
+      <obj_property name="ElementShortName">preCnt</obj_property>
+      <obj_property name="ObjectShortName">preCnt</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/tickPreCnt" type="logic">
+      <obj_property name="ElementShortName">tickPreCnt</obj_property>
+      <obj_property name="ObjectShortName">tickPreCnt</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider23">
+      <obj_property name="label">STM setval</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/stSetValReg" type="other">
+      <obj_property name="ElementShortName">stSetValReg</obj_property>
+      <obj_property name="ObjectShortName">stSetValReg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/cntZeroTick" type="logic">
+      <obj_property name="ElementShortName">cntZeroTick</obj_property>
+      <obj_property name="ObjectShortName">cntZeroTick</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider36">
+      <obj_property name="label">PWM Counter</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/pwmCounterReg" type="array">
+      <obj_property name="ElementShortName">pwmCounterReg[2:0]</obj_property>
+      <obj_property name="ObjectShortName">pwmCounterReg[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/direction" type="logic">
+      <obj_property name="ElementShortName">direction</obj_property>
+      <obj_property name="ObjectShortName">direction</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/pwmCounterNxt" type="array">
+      <obj_property name="ElementShortName">pwmCounterNxt[2:0]</obj_property>
+      <obj_property name="ObjectShortName">pwmCounterNxt[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/dirNxt" type="logic">
+      <obj_property name="ElementShortName">dirNxt</obj_property>
+      <obj_property name="ObjectShortName">dirNxt</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider41">
+      <obj_property name="label">PWMOut</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/cmpRegister" type="array">
+      <obj_property name="ElementShortName">cmpRegister[0:1][2:0]</obj_property>
+      <obj_property name="ObjectShortName">cmpRegister[0:1][2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/ServoCtl_tb/uut/cmpVal" type="array">
+      <obj_property name="ElementShortName">cmpVal[1:0]</obj_property>
+      <obj_property name="ObjectShortName">cmpVal[1:0]</obj_property>
+   </wvobject>
+</wave_config>
