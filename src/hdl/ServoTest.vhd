@@ -50,7 +50,8 @@ architecture Behavioral of ServoTest is
 --constant DIV:           integer := 5;
 constant NP:            integer := 12;
 constant NC:            integer := 2;
-constant DIV:           integer := 250;
+constant NDIV:          integer := 9; 
+constant DIVCNT:        integer := 250;         -- actual division count
 constant NMin:          integer := 112;         -- minimum value to be set for minimum pulse length of ca. 0.5ms
 constant NBtn:          integer := 4;
 
@@ -62,6 +63,7 @@ signal chanNxt:         std_logic_vector(3 downto 0);
 signal trg:             std_logic;
 signal rdy:             std_logic;
 signal pwmi:            std_logic_vector(NC-1 downto 0);
+signal div:             std_logic_vector(NDIV-1 downto 0);
   
 signal btn_edge:        std_logic_vector(NBtn-1 downto 0);
 signal btn_dbc:         std_logic_vector(NBtn-1 downto 0);
@@ -100,14 +102,16 @@ component ServoCtrl is
     generic (
         NP:         integer;      -- bits of precision
         NC:         integer;        -- number of channels
-        DIV:        integer      -- prescaler count
+        NDIV:       integer      -- prescaler count
     );
     port (
         clk:        in std_logic;
+        reset:      in std_logic;
         outVal:     in std_logic_vector(NP-1 downto 0);        -- output value
         chan:       in std_logic_vector(3 downto 0);           -- channel to be set
         trg:        in std_logic;                              -- triggers setting of new value
         rdy:        out std_logic;                             -- ready to take new command
+        div:        in std_logic_vector(NDIV-1 downto 0);      -- prescaler value 
         pwm:        out std_logic_vector(NC-1 downto 0)        -- output pwm signal
         );
 end component;
@@ -153,17 +157,20 @@ begin
     generic map (
         NP => NP,
         NC => NC,
-        DIV => DIV
+        NDIV => NDIV
     )
     port map (
         clk => clk,
+        reset => '0',
         outVal => outVal,
         chan => chan,
         trg => trg,
         rdy => rdy,
+        div => div,
         pwm => pwmi
     );
 
+div <= std_logic_vector(to_unsigned(DIVCNT, NDIV));
 pwm(NC-1 downto 0) <= pwmi;
 pwm(3 downto NC) <= (others => '0');
 

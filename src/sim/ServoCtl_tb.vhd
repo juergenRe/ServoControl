@@ -46,26 +46,30 @@ signal reset:           std_logic := '0';
 -- inputs to ServoCtrl block
 constant NP:            integer := 3;
 constant NC:            integer := 2;
-constant DIV:           integer := 5;
+constant NDIV:          integer := 4;
+constant DIVCNT:        integer := 5;
 
 signal outVal:          std_logic_vector(NP-1 downto 0) := (others => '0');
 signal chan:            std_logic_vector(3 downto 0) := (others => '0');
 signal trg:             std_logic := '0';
 signal rdy:             std_logic;
 signal pwm:             std_logic_vector(NC-1 downto 0);
+signal div:             std_logic_vector(NDIV-1 downto 0);  
   
 component ServoCtrl is
     generic (
         NP:         integer;      -- bits of precision
-        NC:         integer;        -- number of channels
-        DIV:        integer      -- prescaler count
+        NC:         integer;      -- number of channels
+        NDIV:       integer      -- prescaler bit width
     );
     port (
         clk:        in std_logic;
+        reset:      in std_logic;
         outVal:     in std_logic_vector(NP-1 downto 0);        -- output value
         chan:       in std_logic_vector(3 downto 0);           -- channel to be set
         trg:        in std_logic;                              -- triggers setting of new value
         rdy:        out std_logic;                             -- ready to take new command
+        div:        in std_logic_vector(NDIV-1 downto 0);      -- prescaler value 
         pwm:        out std_logic_vector(NC-1 downto 0)        -- output pwm signal
         );
 end component;
@@ -75,14 +79,16 @@ begin
     generic map (
         NP => NP,
         NC => NC,
-        DIV => DIV
+        NDIV => NDIV
     )
     port map (
         clk => clk,
+        reset => reset,
         outVal => outVal,
         chan => chan,
         trg => trg,
         rdy => rdy,
+        div => div,
         pwm => pwm
     );
 
@@ -99,7 +105,9 @@ begin
    -- Stimulus process
     stim_proc: process
     begin
-        wait for 40 ns;
+        -- check behaviour when no reset is given
+        div <= std_logic_vector(to_unsigned(DIVCNT, NDIV));
+        wait for 1000 ns;
         reset <= '1';
         wait for 100ns;
         reset <= '0';
