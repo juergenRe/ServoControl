@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="servoControl_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="servoControl_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="72400000fs"></ZoomStartTime>
+      <ZoomEndTime time="744600001fs"></ZoomEndTime>
+      <Cursor1Time time="515000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="291"></NameColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="34" />
+   <wvobject fp_name="/servoControl_tb/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/reset" type="logic">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/val" type="array">
+      <obj_property name="ElementShortName">val[2:0]</obj_property>
+      <obj_property name="ObjectShortName">val[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/chan" type="array">
+      <obj_property name="ElementShortName">chan[3:0]</obj_property>
+      <obj_property name="ObjectShortName">chan[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/wr_tick" type="logic">
+      <obj_property name="ElementShortName">wr_tick</obj_property>
+      <obj_property name="ObjectShortName">wr_tick</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/pwm" type="array">
+      <obj_property name="ElementShortName">pwm[1:0]</obj_property>
+      <obj_property name="ObjectShortName">pwm[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/cfg" type="array">
+      <obj_property name="ElementShortName">cfg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">cfg[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/rd_data" type="array">
+      <obj_property name="ElementShortName">rd_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">rd_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/rd_tick" type="logic">
+      <obj_property name="ElementShortName">rd_tick</obj_property>
+      <obj_property name="ObjectShortName">rd_tick</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider42">
+      <obj_property name="label">Wrapper</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/stSetDivReg" type="other">
+      <obj_property name="ElementShortName">stSetDivReg</obj_property>
+      <obj_property name="ObjectShortName">stSetDivReg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/pwmDivideReg" type="array">
+      <obj_property name="ElementShortName">pwmDivideReg[3:0]</obj_property>
+      <obj_property name="ObjectShortName">pwmDivideReg[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/pwmDivideNxt" type="array">
+      <obj_property name="ElementShortName">pwmDivideNxt[3:0]</obj_property>
+      <obj_property name="ObjectShortName">pwmDivideNxt[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/cfg_tick" type="logic">
+      <obj_property name="ElementShortName">cfg_tick</obj_property>
+      <obj_property name="ObjectShortName">cfg_tick</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/stSetTrgReg" type="other">
+      <obj_property name="ElementShortName">stSetTrgReg</obj_property>
+      <obj_property name="ObjectShortName">stSetTrgReg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/trg" type="logic">
+      <obj_property name="ElementShortName">trg</obj_property>
+      <obj_property name="ObjectShortName">trg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/rdy" type="logic">
+      <obj_property name="ElementShortName">rdy</obj_property>
+      <obj_property name="ObjectShortName">rdy</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider323">
+      <obj_property name="label">Status-Gen</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/status" type="array">
+      <obj_property name="ElementShortName">status[31:0]</obj_property>
+      <obj_property name="ObjectShortName">status[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/rdy_tick" type="logic">
+      <obj_property name="ElementShortName">rdy_tick</obj_property>
+      <obj_property name="ObjectShortName">rdy_tick</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/run_tick" type="logic">
+      <obj_property name="ElementShortName">run_tick</obj_property>
+      <obj_property name="ObjectShortName">run_tick</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider46">
+      <obj_property name="label">SrvCtrl-cntTick</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/stPreCntReg" type="other">
+      <obj_property name="ElementShortName">stPreCntReg</obj_property>
+      <obj_property name="ObjectShortName">stPreCntReg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/preCntReg" type="array">
+      <obj_property name="ElementShortName">preCntReg[3:0]</obj_property>
+      <obj_property name="ObjectShortName">preCntReg[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/maxCntReg" type="array">
+      <obj_property name="ElementShortName">maxCntReg[3:0]</obj_property>
+      <obj_property name="ObjectShortName">maxCntReg[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/tickPreCnt" type="logic">
+      <obj_property name="ElementShortName">tickPreCnt</obj_property>
+      <obj_property name="ObjectShortName">tickPreCnt</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider62">
+      <obj_property name="label">SrvCtrl-pwmCnt</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/pwmCounterReg" type="array">
+      <obj_property name="ElementShortName">pwmCounterReg[2:0]</obj_property>
+      <obj_property name="ObjectShortName">pwmCounterReg[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/direction" type="logic">
+      <obj_property name="ElementShortName">direction</obj_property>
+      <obj_property name="ObjectShortName">direction</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/cmpVal" type="array">
+      <obj_property name="ElementShortName">cmpVal[1:0]</obj_property>
+      <obj_property name="ObjectShortName">cmpVal[1:0]</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider66">
+      <obj_property name="label">SrvCtrl-SetVal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/stSetValReg" type="other">
+      <obj_property name="ElementShortName">stSetValReg</obj_property>
+      <obj_property name="ObjectShortName">stSetValReg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/cmpRegister" type="array">
+      <obj_property name="ElementShortName">cmpRegister[0:1][2:0]</obj_property>
+      <obj_property name="ObjectShortName">cmpRegister[0:1][2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/servoControl_tb/uut/servo_ctl/cntZeroTick" type="logic">
+      <obj_property name="ElementShortName">cntZeroTick</obj_property>
+      <obj_property name="ObjectShortName">cntZeroTick</obj_property>
+   </wvobject>
+</wave_config>

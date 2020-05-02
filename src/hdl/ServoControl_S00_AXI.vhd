@@ -19,7 +19,7 @@ entity ServoControl_v1_0_S00_AXI is
 	port (
 		-- Users to add ports here
 		-- channel number where to write value
-        U_CHAN  :   out std_logic_vector(C_U_NC_AXI-1 downto 0);
+        U_CHAN  :   out std_logic_vector(3 downto 0);
         --  pwm value
         U_VAL   :   out std_logic_vector(C_U_NP_AXI-1 downto 0);
         -- configuration and control word:
@@ -29,6 +29,11 @@ entity ServoControl_v1_0_S00_AXI is
         U_CFG   :   out std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
 		-- User ports ends
 		-- Do not modify the ports beyond this line
+		U_WR_TICK:  out std_logic;
+		-- data to be read via AXI bus
+        U_RD_DATA: in std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
+        -- tick for updating new data in register
+        U_RD_TICK: in std_logic;
 
 		-- Global Clock Signal
 		S_AXI_ACLK	: in std_logic;
@@ -130,9 +135,10 @@ architecture arch_imp of ServoControl_v1_0_S00_AXI is
 
 begin
     -- user signal assignments
-    U_CHAN <= slv_reg0(C_S_AXI_DATA_WIDTH-1 downto C_S_AXI_DATA_WIDTH-C_U_NC_AXI);
+    U_CHAN <= slv_reg0(C_S_AXI_DATA_WIDTH-1 downto C_S_AXI_DATA_WIDTH-4);
     U_VAL <= slv_reg0(C_U_NP_AXI-1 downto 0);
     U_CFG <= slv_reg1;
+    U_WR_TICK <= slv_reg_wren;
     
 	-- I/O Connections assignments
 
@@ -231,7 +237,7 @@ begin
 	    if S_AXI_ARESETN = '0' then
 	      slv_reg0 <= (others => '0');
 	      slv_reg1 <= (others => '0');
-	      slv_reg2 <= (others => '0');
+	      --slv_reg2 <= (others => '0');
 	      slv_reg3 <= (others => '0');
 	    else
 	      loc_addr := axi_awaddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
@@ -253,14 +259,15 @@ begin
 	                slv_reg1(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	              end if;
 	            end loop;
-	          when b"10" =>
-	            for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
-	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
-	                -- Respective byte enables are asserted as per write strobes                   
-	                -- slave registor 2
-	                slv_reg2(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
-	              end if;
-	            end loop;
+	            -- slv_reb2 will not written to from AXI
+--	          when b"10" =>
+--	            for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
+--	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
+--	                -- Respective byte enables are asserted as per write strobes                   
+--	                -- slave registor 2
+--	                slv_reg2(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
+--	              end if;
+--	            end loop;
 	          when b"11" =>
 	            for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
@@ -272,7 +279,7 @@ begin
 	          when others =>
 	            slv_reg0 <= slv_reg0;
 	            slv_reg1 <= slv_reg1;
-	            slv_reg2 <= slv_reg2;
+	            --slv_reg2 <= slv_reg2;
 	            slv_reg3 <= slv_reg3;
 	        end case;
 	      end if;
@@ -400,7 +407,22 @@ begin
 
 
 	-- Add user logic here
-
+    -- write to register 3 to transport status
+	wr_reg2: process (S_AXI_ACLK)
+	variable loc_addr :std_logic_vector(OPT_MEM_ADDR_BITS downto 0); 
+	begin
+	  if rising_edge(S_AXI_ACLK) then 
+	    if S_AXI_ARESETN = '0' then
+	      slv_reg2 <= (others => '0');
+	    else
+	      if U_RD_TICK = '1' then
+            slv_reg2 <= U_RD_DATA;
+          else
+            slv_reg2 <= slv_reg2;
+          end if;
+        end if;
+      end if;
+    end process wr_reg2;
 	-- User logic ends
 
 end arch_imp;

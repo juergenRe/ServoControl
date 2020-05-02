@@ -139,7 +139,7 @@ begin
     end if;
 end process pwm_cnt_reg;
 
-pwm_cnt_nxt: process (pwmCounterReg, direction, stSetValReg)
+pwm_cnt_nxt: process (pwmCounterReg, direction, stSetValReg, cntMax)
 begin
     pwmCounterNxt <= pwmCounterReg;
     dirNxt <= direction;

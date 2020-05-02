@@ -49,23 +49,15 @@ entity ServoControl_v1_0 is
 end ServoControl_v1_0;
 
 architecture arch_imp of ServoControl_v1_0 is
-    constant CFG_TRG:       integer := C_S00_AXI_DATA_WIDTH -1;
-    constant CFG_ONOFF:     integer := C_S00_AXI_DATA_WIDTH -2;
     signal pwm_channel:     std_logic_vector(C_U_NC-1 downto 0);
     signal pwm_value:       std_logic_vector(C_U_NP-1 downto 0);
     signal pwm_cfg:         std_logic_vector(C_S00_AXI_DATA_WIDTH -1 downto 0);
-    signal pwm_reset:       std_logic;
-    signal pwm_trg:         std_logic;
-    signal pwm_rdy:         std_logic;
-    signal pwm_divide:      std_logic_vector(C_U_NDIV-1 downto 0);
-    signal pwm_out:         std_logic_vector(C_U_NC-1 downto 0);
-    
     signal cfg_tick:        std_logic;
+    signal pwm_out:         std_logic_vector(C_U_NC-1 downto 0);
+    signal reset:           std_logic;
+    signal rd_data:         std_logic_vector(C_S00_AXI_DATA_WIDTH -1 downto 0);
+    signal rd_tick:         std_logic;
 
-    type t_stSetTrg is (stPwrOn, stIdle, stWaitCfgStart, stWaitCfg);
-    signal stSetTrgReg:     t_stSetTrg;    
-    signal stSetTrgNxt:     t_stSetTrg;
-    
 	-- component declaration
         -- configuration and control word:
         -- U_CFG(U_C_NDIV-1 downto 0) --> actual prescale value; will be changed with every prescale tick
@@ -75,14 +67,17 @@ architecture arch_imp of ServoControl_v1_0 is
 		generic (
         C_U_NP_AXI          : integer := 16;      -- max bits of precision
         C_U_NC_AXI          : integer := 4;        -- max number of channels
-		C_S_AXI_DATA_WIDTH	: integer	:= 32;
-		C_S_AXI_ADDR_WIDTH	: integer	:= 4
+		C_S_AXI_DATA_WIDTH	: integer := 32;
+		C_S_AXI_ADDR_WIDTH	: integer := 4
 		);
 		port (
-        U_CHAN          : out std_logic_vector(C_U_NC_AXI-1 downto 0);
+        U_CHAN          : out std_logic_vector(3 downto 0);
         U_VAL           : out std_logic_vector(C_U_NP_AXI-1 downto 0);
         U_CFG           : out std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
-        
+        U_WR_TICK       : out std_logic;
+		U_RD_DATA       : in std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
+		U_RD_TICK       : in std_logic;
+
 		S_AXI_ACLK	    : in std_logic;
 		S_AXI_ARESETN	: in std_logic;
 		S_AXI_AWADDR	: in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
@@ -107,34 +102,31 @@ architecture arch_imp of ServoControl_v1_0 is
 		);
 	end component ServoControl_v1_0_S00_AXI;
 
-    component ServoCtrl is
+    component ServoCtrlWrapper is
         generic (
-            NP:         integer;      -- bits of precision
-            NC:         integer;        -- number of channels
-            NDIV:       integer      -- prescaler count
+            -- Users to add parameters here
+            C_U_NP                  : integer := 16;      -- max bits of precision
+            C_U_NC                  : integer := 4;        -- max number of channels
+            C_U_NDIV                : integer := 16;        -- max size for prescale counter
+            C_S_AXI_DATA_WIDTH	    : integer := 32
         );
         port (
-            clk:        in std_logic;
-            reset:      in std_logic;
-            outVal:     in std_logic_vector(NP-1 downto 0);        -- output value
-            chan:       in std_logic_vector(3 downto 0);           -- channel to be set
-            trg:        in std_logic;                              -- triggers setting of new value
-            rdy:        out std_logic;                             -- ready to take new command
-            div:        in std_logic_vector(NDIV-1 downto 0);      -- prescaler value 
-            pwm:        out std_logic_vector(NC-1 downto 0)        -- output pwm signal
-            );
-    end component;
+    	    clk         : in std_logic;
+	        reset       : in std_logic;
+            U_CHAN      : in std_logic_vector(3 downto 0);
+            U_VAL       : in std_logic_vector(C_U_NP-1 downto 0);
+            -- configuration and control word:
+            -- U_CFG(U_C_NDIV-1 downto 0) --> actual prescale value; will be changed with every prescale tick
+            -- U_CFG(31) = trg            --> latch new values with falling edge
+            -- U_CFG(30) = ONOFF          --> global on/off of all pwm signals
+            U_CFG       : in std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
+            U_WR_TICK   : in std_logic;
+            U_RD_DATA   : out std_logic_vector(C_S_AXI_DATA_WIDTH -1 downto 0);
+            U_RD_TICK   : out std_logic;
+            pwm_out     : out std_logic_vector(C_U_NC-1 downto 0)
+        );
+    end component ServoCtrlWrapper;
     
-    component EdgeDetect is
-	port(
-		clk			: in std_logic;
-		reset		: in std_logic;
-		level		: in std_logic;
-		tick_rise	: out std_logic;
-		tick_fall	: out std_logic
-	);
-end component;
-
 begin
 
 -- Instantiation of Axi Bus Interface S00_AXI
@@ -149,6 +141,9 @@ ServoControl_v1_0_S00_AXI_inst : ServoControl_v1_0_S00_AXI
 	    U_CHAN          => pwm_channel,
 	    U_VAL           => pwm_value,
 	    U_CFG           => pwm_cfg,
+	    U_WR_TICK       => cfg_tick,
+	    U_RD_DATA       => rd_data,
+	    U_RD_TICK       => rd_tick,
 	    ------------------------------- 
 		S_AXI_ACLK	    => s00_axi_aclk,
 		S_AXI_ARESETN	=> s00_axi_aresetn,
@@ -174,86 +169,27 @@ ServoControl_v1_0_S00_AXI_inst : ServoControl_v1_0_S00_AXI
 	);
 
 	-- Add user logic here
-	
-	edge_btn_k: EdgeDetect
-    port map (
-        clk         => s00_axi_aclk,
-        reset       => pwm_reset,
-        level       => pwm_cfg(CFG_TRG),
-        tick_rise   => cfg_tick,
-        tick_fall   => open
-    );
-	
-    servo_ctl: ServoCtrl
-    generic map (
-        NP      => C_U_NP,
-        NC      => C_U_NC,
-        NDIV    => C_U_NDIV
+ServoControlWrapper_inst: ServoCtrlWrapper
+    generic map(
+        C_U_NP              => C_U_NP,       
+        C_U_NC              => C_U_NC,
+        C_U_NDIV            => C_U_NDIV,
+        C_S_AXI_DATA_WIDTH  => C_S00_AXI_DATA_WIDTH
     )
     port map (
-        clk     => s00_axi_aclk,
-        reset   => pwm_reset, 
-        outVal  => pwm_value,
-        chan    => pwm_channel,
-        trg     => pwm_trg,
-        rdy     => pwm_rdy,
-        div     => pwm_divide,
-        pwm     => pwm_out
+	    clk         => s00_axi_aclk,
+	    reset       => reset,
+        U_CHAN      => pwm_channel,     
+        U_VAL       => pwm_value,
+        U_CFG       => pwm_cfg,
+        U_WR_TICK   => cfg_tick,
+	    U_RD_DATA   => rd_data,
+	    U_RD_TICK   => rd_tick,
+        pwm_out     => pwm_out
     );
-
-    pwm_reset <= not s00_axi_aresetn;
     pwmi <= pwm_out;
-    
-    -- set the divider with each cfg tick from the processor
-    set_div: process(s00_axi_aclk, pwm_reset)
-    begin
-        if rising_edge(s00_axi_aclk) then
-            pwm_divide <= pwm_divide;
-            if pwm_reset = '1' then
-                pwm_divide <= (others => '1');
-            else
-                if cfg_tick = '1' then
-                    pwm_divide <= pwm_cfg(C_U_NDIV-1 downto 0);
-                end if;
-            end if;
-        end if;
-    end process set_div;
-    
-    -- handle trigger of the pwm control
-    set_trg_reg: process(s00_axi_aclk, pwm_reset)
-    begin
-        if rising_edge(s00_axi_aclk) then
-            if pwm_reset ='1' then
-                stSetTrgReg <= stPwrOn;
-            else
-                stSetTrgReg <= stSetTrgNxt;
-            end if;
-        end if;
-    end process set_trg_reg;
-    
-    set_trg_nxt: process(stSetTrgReg, pwm_rdy, cfg_tick)
-    begin
-        stSetTrgNxt <= stSetTrgReg;
-        pwm_trg <= '0';
-        case stSetTrgReg is
-            when stPwrOn =>
-                stSetTrgNxt <= stIdle;
-            when stIdle =>
-                if pwm_rdy = '1' and cfg_tick = '1' then
-                    stSetTrgNxt <= stWaitCfgStart;
-                    pwm_trg <= '1';
-                end if;
-            when stWaitCfgStart =>
-                if pwm_rdy = '0' then
-                    stSetTrgNxt <= stWaitCfg;
-                end if;
-            when stWaitCfg =>
-                if pwm_rdy = '1' then
-                    stSetTrgNxt <= stIdle;
-                end if;
-        end case;
-    end process set_trg_nxt;
-    
+    reset <= not s00_axi_aresetn;
+  
 	-- User logic ends
 
 end arch_imp;
