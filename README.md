@@ -13,10 +13,11 @@ This should be done using the scripts in /proj subfolder:
 
 ## create IP from it:
 	- cd into <project folder>/proj
-	- rename IP is necessary
+	- rename IP is necessary, also check top module and compile order at the end of the script
 	- execute: source ./mkIP.tcl
 	- commit changes in folders src, xgui and component.xml. Subfolder "project" might be deleted.
 	- recreate depending projects
+	- ipx::* is poorly documented; best choice is to use help ipx::* to get a list of commands and then call help for each command.
 
 ## Debugging with ILA at startup:
 	- see UG908, Chapter 11, "Trigger at startup"
