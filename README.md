@@ -1,6 +1,17 @@
-# Empty project template
+# ServoControl
 Created for Vivado 2019.1
-Descrition
+Reusable IP for controlling servo motors using a PWM output signal. This component is designed to be integrated in a BD containing a Zynq
+processing device, thus data transfer is using AXI4 protocol using 3 registers.
+The component is configurable:
+- Nb of pwm channels 1 to 16
+- resolution from 4 to 16 bits
+- prescaler bits from 2 to 16 bits; prescaler works on all channels
+
+Register description:
+Register 1: (write-only) combined channel/value. channel: upper 4 bits; value: lower part according precision chosen
+Register 2: (write-only) configuration and global on/off. Configuration in lower part, global on/off in bit31
+Register 3: (read-only) status: bit 31 = '1' --> ready, oherwise wait
+Register 4: unused
 
 ## Recreating the project
 This should be done using the scripts in /proj subfolder:
